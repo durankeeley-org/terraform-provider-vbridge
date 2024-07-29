@@ -1,0 +1,81 @@
+# This workflow will build a golang project for Windows and Linux
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: Go Build
+
+# on:
+#   push:
+#     branches: [ "main" ]
+#   pull_request:
+#     branches: [ "main" ]
+#   push:
+#     tags:
+#       - 'v*'
+on:
+  push:
+    branches: [ "workflowtest" ]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.23.2'
+
+    - name: Build for Windows
+      working-directory: ./provider
+      env:
+        GOOS: windows
+        GOARCH: amd64
+      run: go build -o provider-compiled/terraform-provider-vbridge-vm.exe
+
+    - name: Build for Linux
+      working-directory: ./provider
+      env:
+        GOOS: linux
+        GOARCH: amd64
+      run: go build -o provider-compiled/terraform-provider-vbridge-vm
+
+    # - name: Upload Artifacts
+    #   uses: actions/upload-artifact@v3
+    #   with:
+    #     name: golang-binaries
+    #     path: ./provider/provider-compiled/
+
+    - name: Create GitHub Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v1.0.0
+        release_name: v1.0.0
+        draft: false
+        prerelease: false
+
+    - name: Upload Windows Artifact
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./provider/provider-compiled/terraform-provider-vbridge-vm.exe
+        asset_name: terraform-provider-vbridge-vm.exe
+        asset_content_type: application/octet-stream
+
+    - name: Upload Linux Artifact
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./provider/provider-compiled/terraform-provider-vbridge-vm
+        asset_name: terraform-provider-vbridge-vm
+        asset_content_type: application/octet-stream

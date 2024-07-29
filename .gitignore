@@ -1,0 +1,6 @@
+example/secret.tfvars
+example/.terraform/*
+example/.terraform.lock.hcl
+example/terraform.tfstate
+example/terraform.tfstate.backup
+mock-api/*.json

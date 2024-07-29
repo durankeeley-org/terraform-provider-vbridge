@@ -1,0 +1,95 @@
+variable "api_key" {
+  description = "Softsource vBridge API Key"
+  type        = string
+  sensitive   = true
+}
+
+variable "api_user_email" {
+  description = "Softsource vBridge user email address"
+  type        = string
+  sensitive   = true
+}
+
+variable "client_id" {
+  description = "Softsource vBridge client id"
+  type        = number
+  sensitive   = true
+}
+
+variable "api_url" {
+  description = "URL for the API"
+  type        = string
+  default = "http://127.0.0.1:8087"
+}
+
+variable "objectstorage_tenant_id" {
+  description = "Softsource vBridge Object Storage Tenant ID"
+  type        = number
+  sensitive   = true
+}
+
+variable "canonical_user_id" {
+  description = "Softsource vBridge Object Storage Canonical User ID"
+  type        = string
+  sensitive   = true
+}
+
+terraform {
+  required_providers {
+    vbridge = {
+      version = "~> 1.0.1"
+      source  = "durankeeley.com/vbridge/vbridge-vm"
+    }
+
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+
+provider "vbridge" {
+  api_url    = "${var.api_url}"
+  api_key    = "${var.api_key}"
+  user_email = "${var.api_user_email}"
+}
+
+resource "vbridge_objectstorage_bucket" "examplebucket" {
+  objectstorage_tenant_id = var.objectstorage_tenant_id
+  canonical_user_id = "${var.canonical_user_id}"
+  bucket_name = "sdcterraformbucket"
+  object_lock = false
+}
+
+provider "aws" {
+  access_key                  = ""
+  secret_key                  = ""
+  region                      = "us-east-1"
+
+  s3_use_path_style           = true
+  skip_credentials_validation = true
+  skip_metadata_api_check     = true
+  skip_requesting_account_id  = true
+
+  endpoints {
+    s3       = "https://s3-chc.mycloudspace.co.nz"
+    dynamodb = "https://s3-chc.mycloudspace.co.nz"
+  }
+}
+
+resource "aws_s3_bucket_cors_configuration" "example" {
+  bucket = vbridge_objectstorage_bucket.examplebucket.id
+
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["PUT", "POST"]
+    allowed_origins = ["https://s3-chc.mycloudspace.co.nz"]
+    expose_headers  = ["ETag"]
+    max_age_seconds = 3000
+  }
+
+  cors_rule {
+    allowed_methods = ["GET"]
+    allowed_origins = ["*"]
+  }
+}
