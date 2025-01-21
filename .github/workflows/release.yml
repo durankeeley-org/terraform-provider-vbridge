@@ -13,9 +13,6 @@ jobs:
   goreleaser:
     runs-on: ubuntu-latest
 
-    env:
-      PROVIDER_NAME: "vbridge"
-
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -121,6 +118,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GPG_PASSWORD: ${{ secrets.PASSPHRASE }}
           GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
+          PROVIDER_NAME: "vbridge"
 
       - name: List dist folder
         if: ${{ always() }}
