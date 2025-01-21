@@ -75,7 +75,7 @@ jobs:
               name_template: "terraform-provider-{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
 
           checksum:
-            # name_template: "terraform-provider-{{ .ProjectName }}_{{ .Version }}_SHA256SUMS"
+            name_template: "terraform-provider-{{ .ProjectName }}_{{ .Version }}_SHA256SUMS"
             algorithm: sha256
             extra_files:
               - glob: "terraform-registry-manifest.json"
@@ -106,7 +106,6 @@ jobs:
             disable: true
           EOF
 
-
       - name: Copy manifest into provider
         run: cp terraform-registry-manifest.json provider/
 
@@ -122,3 +121,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GPG_PASSWORD: ${{ secrets.PASSPHRASE }}
           GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
+
+      - name: List dist folder
+        if: ${{ always() }}
+        run: ls -R provider/dist
