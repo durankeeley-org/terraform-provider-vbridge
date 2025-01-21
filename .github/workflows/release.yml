@@ -1,0 +1,121 @@
+name: Release
+
+on:
+  # This will run only when you push a tag like "v0.1.0", "v1.2.3", etc.
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  goreleaser:
+    runs-on: ubuntu-latest
+
+    env:
+      PROVIDER_NAME: "vbridge"
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'provider/go.mod'
+          cache: true
+
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v6
+        id: import_gpg
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+
+      - name: Create GoReleaser config
+        run: |
+          cat <<EOF > provider/goreleaser.yml
+          version: 2
+          project_name: "{{ .Env.PROVIDER_NAME }}"
+          dist: "dist"
+
+          before:
+            hooks:
+              - go mod tidy
+
+          builds:
+            - env:
+                - CGO_ENABLED=0
+              mod_timestamp: "{{ .CommitTimestamp }}"
+              flags:
+                - -trimpath
+              ldflags:
+                - "-s -w -X main.version={{.Version}} -X main.commit={{.Commit}}"
+              goos:
+                - freebsd
+                - windows
+                - linux
+                - darwin
+              goarch:
+                - amd64
+                - "386"
+                - arm
+                - arm64
+              ignore:
+                - goos: darwin
+                  goarch: "386"
+              # The binary inside each archive
+              binary: "terraform-provider-{{ .ProjectName }}"
+
+          archives:
+            - format: zip
+              name_template: "terraform-provider-{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+
+          checksum:
+            name_template: "terraform-provider-{{ .ProjectName }}_{{ .Version }}_SHA256SUMS"
+            algorithm: sha256
+            extra_files:
+              - glob: "terraform-registry-manifest.json"
+                name_template: "terraform-provider-{{ .ProjectName }}_{{ .Version }}_manifest.json"
+
+          signs:
+            - cmd: gpg
+              artifacts: checksum
+              args:
+                - '--batch'
+                - '--pinentry-mode'
+                - 'loopback'
+                - '--local-user'
+                - '{{ .Env.GPG_FINGERPRINT }}'
+                - '--output'
+                - '\${signature}'
+                - '--detach-sign'
+                - '\${artifact}'
+
+          release:
+            extra_files:
+              - glob: "terraform-registry-manifest.json"
+                name_template: "terraform-provider-{{ .ProjectName }}_{{ .Version }}_manifest.json"
+
+          changelog:
+            disable: true
+          EOF
+
+
+      - name: Copy manifest into provider
+        run: cp terraform-registry-manifest.json provider/
+
+      - name: Print config
+        run: cat provider/goreleaser.yml
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          workdir: provider
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
