@@ -14,18 +14,18 @@ permissions:
   contents: write
 
 jobs:
-  create_tag:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Create Tag
-        run: |
-          TAG_NAME=$(echo $GITHUB_REF | sed 's/refs\/heads\///')
-          git tag $TAG_NAME
-          git push origin $TAG_NAME
+  # create_tag:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Create Tag
+  #       run: |
+  #         TAG_NAME=$(echo $GITHUB_REF | sed 's/refs\/heads\///')
+  #         git tag $TAG_NAME
+  #         git push origin $TAG_NAME
 
   goreleaser:
-    needs: create_tag
+    # needs: create_tag
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
