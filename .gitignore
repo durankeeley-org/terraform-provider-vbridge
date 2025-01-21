@@ -4,3 +4,5 @@ example/.terraform.lock.hcl
 example/terraform.tfstate
 example/terraform.tfstate.backup
 mock-api/*.json
+provider/goreleaser.yml
+provider/terraform-registry-manifest.json
