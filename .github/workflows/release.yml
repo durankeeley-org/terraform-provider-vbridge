@@ -85,15 +85,17 @@ jobs:
             - cmd: gpg
               artifacts: checksum
               args:
-                - '--batch'
-                - '--pinentry-mode'
-                - 'loopback'
-                - '--local-user'
-                - '{{ .Env.GPG_FINGERPRINT }}'
-                - '--output'
-                - '\${signature}'
-                - '--detach-sign'
-                - '\${artifact}'
+                - "--batch"
+                - "--local-user"
+                - "{{ .Env.GPG_FINGERPRINT }}"
+                - "--passphrase"
+                - "{{ .Env.GPG_PASSWORD }}"
+                - "--pinentry-mode"
+                - "loopback"
+                - "--output"
+                - "\${signature}"
+                - "--detach-sign"
+                - "\${artifact}"
 
           release:
             extra_files:
@@ -118,4 +120,5 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GPG_PASSWORD: ${{ secrets.PASSPHRASE }}
           GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
