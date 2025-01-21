@@ -75,7 +75,7 @@ jobs:
               name_template: "terraform-provider-{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
 
           checksum:
-            name_template: "terraform-provider-{{ .ProjectName }}_{{ .Version }}_SHA256SUMS"
+            # name_template: "terraform-provider-{{ .ProjectName }}_{{ .Version }}_SHA256SUMS"
             algorithm: sha256
             extra_files:
               - glob: "terraform-registry-manifest.json"
