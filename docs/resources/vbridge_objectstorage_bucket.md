@@ -27,6 +27,12 @@ terraform {
   }
 }
 
+provider "vbridge" {
+  auth_type  = var.auth_type
+  api_key    = var.api_key
+  user_email = var.api_user_email
+}
+
 variable "objectstorage_tenant_id" {
   description = "Softsource vBridge Object Storage Tenant ID"
   type        = number
