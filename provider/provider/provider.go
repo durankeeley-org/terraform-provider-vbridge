@@ -9,19 +9,25 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func Provider() *schema.Provider {
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{
-			"api_url": {
-				Type:     schema.TypeString,
-				Required: true,
+			"auth_type": {
+				Type:         schema.TypeString,
+				Required:     true,
+				Description:  "Authentication type to use (either 'apiKey' or 'Bearer').",
+				ValidateFunc: validation.StringInSlice([]string{"apiKey", "Bearer"}, false),
 			},
 			"api_key": {
 				Type:      schema.TypeString,
 				Required:  true,
 				Sensitive: true,
+				Description: "API key or token used for authentication. " +
+					"If auth_type = 'Bearer', this is your bearer token. " +
+					"If auth_type = 'apiKey', this is your API key.",
 			},
 			"user_email": {
 				Type:     schema.TypeString,
@@ -40,11 +46,12 @@ func Provider() *schema.Provider {
 func configureProvider(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	apiURL := d.Get("api_url").(string)
+	apiURL := "https://api.mycloudspace.co.nz"
+	authType := d.Get("auth_type").(string)
 	apiKey := d.Get("api_key").(string)
 	userEmail := d.Get("user_email").(string)
 
-	client, err := api.NewClient(apiURL, apiKey, userEmail)
+	client, err := api.NewClient(apiURL, authType, apiKey, userEmail)
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,

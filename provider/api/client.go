@@ -10,13 +10,15 @@ import (
 
 type Client struct {
 	APIUrl    string
+	AuthType  string
 	APIKey    string
 	UserEmail string
 }
 
-func NewClient(apiURL, apiKey, userEmail string) (*Client, error) {
+func NewClient(apiURL, authType, apiKey, userEmail string) (*Client, error) {
 	return &Client{
 		APIUrl:    apiURL,
+		AuthType:  authType,
 		APIKey:    apiKey,
 		UserEmail: userEmail,
 	}, nil
@@ -38,7 +40,15 @@ func (c *Client) apiRequest(method, endpoint string, payload interface{}) (*http
 		return nil, fmt.Errorf("error creating HTTP request: %w", err)
 	}
 
-	req.Header.Set("Authorization", "Bearer "+c.APIKey)
+	switch c.AuthType {
+	case "apiKey":
+		req.Header.Set("Authorization", fmt.Sprintf("ApiKey %s", c.APIKey))
+	case "Bearer":
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.APIKey))
+	default:
+		return nil, fmt.Errorf("unknown auth type: %s", c.AuthType)
+	}
+
 	req.Header.Set("x-mcs-user", c.UserEmail)
 	req.Header.Set("Content-Type", "application/json")
 
