@@ -2,6 +2,7 @@ package virtualmachine
 
 import (
 	"fmt"
+	"time"
 	"terraform-provider-vbridge/api"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -13,11 +14,9 @@ func Create(d *schema.ResourceData, meta interface{}) error {
 	template, templateSet := d.GetOk("template")
 	capacity, capacitySet := d.GetOk("operating_system_disk_capacity")
 
-	if templateSet && capacitySet {
-		return fmt.Errorf("`operating_system_disk_capacity` should not be set when `template` is specified")
-	} else if !templateSet && !capacitySet {
-		return fmt.Errorf("`operating_system_disk_capacity` is required when `template` is not specified")
-	}
+	if !templateSet && !capacitySet {
+        return fmt.Errorf("`operating_system_disk_capacity` is required when `template` is not specified")
+    }
 
 	vm := api.VirtualMachine{
 		ClientId:   d.Get("client_id").(int),
@@ -40,10 +39,13 @@ func Create(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	if templateSet {
-		vm.Template = template.(string)
-	} else {
-		vm.OperatingSystemDisk.Capacity = capacity.(int)
-	}
+        vm.Template = template.(string)
+    }
+
+	if capacitySet {
+        vm.OperatingSystemDisk.Capacity = capacity.(int)
+        vm.OperatingSystemDisk.StorageProfile = d.Get("operating_system_disk_storage_profile").(string)
+    }
 
 	if v, ok := d.GetOk("iso_file"); ok {
 		vm.IsoFile = v.(string)
@@ -61,5 +63,23 @@ func Create(d *schema.ResourceData, meta interface{}) error {
 	d.SetId(vmID)
 	d.Set("vm_id", vmID)
 
+	if err := Read(d, meta); err != nil {
+        return err
+    }
+
+    if capacitySet {
+        userRequestedCapacity := capacity.(int)
+        serverCapacity := d.Get("operating_system_disk_capacity").(int)
+        diskID := d.Get("operating_system_disk_guid").(string)
+
+        if userRequestedCapacity > serverCapacity {
+            err = apiClient.ExtendVMDisk(vmID, diskID, userRequestedCapacity)
+            if err != nil {
+                return fmt.Errorf("failed to extend disk: %s", err)
+            }
+        }
+    }
+	time.Sleep(5 * time.Second)
 	return Read(d, meta)
+
 }
