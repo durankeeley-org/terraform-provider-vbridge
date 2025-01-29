@@ -27,12 +27,12 @@ locals {
 resource "vbridge_virtual_machine" "example" {
   provider    = vbridge
   client_id   = var.client_id
-  name        = "${local.subscription}-${local.christchurch_hosting.christchurch_shortname}"
+  name        = "${local.subscription}-${local.christchurch_hosting.christchurch_shortname}-example"
   template    = "Windows2022_Standard_30GB"
   guest_os_id = "windows2019srv_64Guest"
   cores       = 2
   memory_size = 6
-  # operating_system_disk_capacity     = 30 
+  operating_system_disk_capacity     = 35
   operating_system_disk_storage_profile = "vStorageT1"
   iso_file                              = ""
   quote_item                            = {}
@@ -48,3 +48,46 @@ resource "vbridge_virtual_machine" "example" {
   }
 }
 ```
+
+## Argument Reference
+
+The following arguments are supported:
+
+* `client_id` - (Required) The ID of the vBridge client to create the virtual machine for.
+
+* `name` - (Required) The name of the virtual machine.
+
+* `template` - (Optional) The template to use for the virtual machine.
+
+* `guest_os_id` - (Required) The guest OS ID to use for the virtual machine.
+
+* `cores` - (Required) The number of cores to allocate to the virtual machine.
+
+* `memory_size` - (Required) The amount of memory to allocate to the virtual machine.
+
+* `operating_system_disk_capacity` - (Required) The capacity of the operating system disk in GB.
+
+* `operating_system_disk_storage_profile` - (Required) The storage profile to use for the operating system disk, options are `vStorageT1`, `vStorageT2`, `vStorageT3`.
+
+* `iso_file` - (Optional) The ISO file to use for the virtual machine.
+
+* `quote_item` - (Optional) The quote item to use for the virtual machine.
+
+* `hosting_location_id` - (Required) The ID of the hosting location to create the virtual machine in.
+
+* `hosting_location_name` - (Required) The name of the hosting location to create the virtual machine in.
+
+* `hosting_location_default_network` - (Required) The default network to use for the virtual machine.
+
+* `backup_type` - (Required) The backup type to use for the virtual machine, options are `vBackupDisk`, `vBackupNone`.
+
+* `lifecycle` - (Optional) A block that can be used to ignore changes to specific arguments. See the example above for usage.
+
+## Attributes Reference
+
+The following attributes are exported:
+
+* `vm_id` - The ID of the virtual machine.
+
+* `mo_ref` - The managed object reference of the virtual machine.
+
