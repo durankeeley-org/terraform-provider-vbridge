@@ -1,0 +1,51 @@
+containers:
+  terraform:
+    image: hashicorp/terraform:latest
+    volumes:
+      - local: .
+        container: /code
+    working_directory: /code
+
+  tfsec:
+    image: aquasec/trivy:latest
+    volumes:
+      - local: .
+        container: /code
+    working_directory: /code
+
+  golang:
+    image: golang:latest
+    volumes:
+      - local: .
+        container: /code
+    working_directory: /code
+
+tasks:
+  build:
+    description: Builds the binaries for local testing
+    shell: true
+    shell_executable: sh
+    run:
+      container: golang
+      command: cd provider && env GOOS=windows GOARCH=amd64 go build -o "../binaries/terraform-provider-vbridge.exe" -buildvcs=false && env GOOS=linux GOARCH=amd64 go build -o "../binaries/terraform-provider-vbridge" -buildvcs=false
+
+  security-scan:
+    description: Runs 'tfsec' security scanner
+    run:
+      container: tfsec
+      command: config /code
+
+  test:
+    description: Runs all the tests
+    shell: true
+    shell_executable: sh
+    run:
+      container: golang
+      command: 
+
+  check-all:
+    description: Runs all the code checks
+    prerequisites:
+      - build
+      - security-scan
+

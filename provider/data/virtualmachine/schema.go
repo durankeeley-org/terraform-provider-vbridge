@@ -1,4 +1,4 @@
-package virtualmachine_data
+package datasource_virtualmachine
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"

@@ -1,6 +1,6 @@
 package api
 
-func testClient(apiUrl string) *Client {
+func MockClient(apiUrl string) *Client {
 	return &Client{
 		APIUrl:    apiUrl,
 		AuthType:  "apiKey",

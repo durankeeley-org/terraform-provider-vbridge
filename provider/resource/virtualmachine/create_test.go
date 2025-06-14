@@ -1,21 +1,21 @@
-package virtualmachine_test
+package resource_virtualmachine_test
 
 import (
-    "testing"
-    "terraform-provider-vbridge/provider"
+	"terraform-provider-vbridge/provider"
+	"testing"
 
-    "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
 // Define the providers to be used in tests
 var testAccProviders = map[string]*schema.Provider{
-    "vbridge": provider.Provider(),
+	"vbridge": provider.Provider(),
 }
 
 // Test configuration
 func testAccVirtualMachineConfig_basic() string {
-    return `
+	return `
     provider "vbridge" {
         api_url    = "https://api.example.com"
         api_key    = "my-api-key"
@@ -31,21 +31,19 @@ func testAccVirtualMachineConfig_basic() string {
 // Test for creating a virtual machine resource
 func TestVirtualMachineCreation(t *testing.T) {
 	// GIVEN
-    resource.Test(t, resource.TestCase{
-        Providers: testAccProviders,
-        Steps: []resource.TestStep{
-            {
+	resource.Test(t, resource.TestCase{
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
 				// WHEN
-                Config: testAccVirtualMachineConfig_basic(),
+				Config: testAccVirtualMachineConfig_basic(),
 
 				// THEN
-                Check: resource.ComposeTestCheckFunc(
-                    resource.TestCheckResourceAttr("vbridge_virtual_machine.vm", "name", "test-vm"),
-                    resource.TestCheckResourceAttr("vbridge_virtual_machine.vm", "cores", "2"),
-                ),
-            },
-        },
-    })
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("vbridge_virtual_machine.vm", "name", "test-vm"),
+					resource.TestCheckResourceAttr("vbridge_virtual_machine.vm", "cores", "2"),
+				),
+			},
+		},
+	})
 }
-
-

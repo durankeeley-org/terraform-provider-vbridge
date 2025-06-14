@@ -1,4 +1,4 @@
-package virtualmachine_data
+package datasource_virtualmachine
 
 import (
 	"fmt"

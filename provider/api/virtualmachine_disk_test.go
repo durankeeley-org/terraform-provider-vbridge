@@ -39,7 +39,7 @@ func TestCreateAdditionalDisk(t *testing.T) {
 	}))
 	defer mockServer.Close()
 
-	client := testClient(mockServer.URL)
+	client := MockClient(mockServer.URL)
 
 	// When
 	disk := VirtualDisk{
@@ -139,7 +139,7 @@ func TestCreateAdditionalDiskWithComparison(t *testing.T) {
 	}))
 	defer mockServer.Close()
 
-	client := testClient(mockServer.URL)
+	client := MockClient(mockServer.URL)
 
 	// When
 	disk := VirtualDisk{
@@ -214,7 +214,7 @@ func TestGetAdditionalDisk(t *testing.T) {
 	}))
 	defer mockServer.Close()
 
-	client := testClient(mockServer.URL)
+	client := MockClient(mockServer.URL)
 
 	// When
 	result, err := client.GetVMDisk("12345", "6000C29d-e3d1-85ce-af08-acf6bae05978")

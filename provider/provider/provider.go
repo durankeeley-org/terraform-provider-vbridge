@@ -3,10 +3,10 @@ package provider
 import (
 	"context"
 	"terraform-provider-vbridge/api"
-	virtualmachine_data "terraform-provider-vbridge/data/virtualmachine"
-	objectstoragebucket "terraform-provider-vbridge/resource/objectstorage_bucket"
-	"terraform-provider-vbridge/resource/virtualmachine"
-	additionaldisk "terraform-provider-vbridge/resource/virtualmachine_additionaldisk"
+	datasource_virtualmachine "terraform-provider-vbridge/data/virtualmachine"
+	resource_objectstoragebucket "terraform-provider-vbridge/resource/objectstorage_bucket"
+	resource_virtualmachine "terraform-provider-vbridge/resource/virtualmachine"
+	resource_virtualmachine_additionaldisk "terraform-provider-vbridge/resource/virtualmachine_additionaldisk"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -36,13 +36,13 @@ func Provider() *schema.Provider {
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"vbridge_virtual_machine":                virtualmachine.Resource(),
-			"vbridge_virtual_machine_additionaldisk": additionaldisk.Resource(),
-			"vbridge_objectstorage_bucket":           objectstoragebucket.Resource(),
+			"vbridge_virtual_machine":                resource_virtualmachine.Resource(),
+			"vbridge_virtual_machine_additionaldisk": resource_virtualmachine_additionaldisk.Resource(),
+			"vbridge_objectstorage_bucket":           resource_objectstoragebucket.Resource(),
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
-			"vbridge_virtual_machine": virtualmachine_data.DataSource(),
+			"vbridge_virtual_machine": datasource_virtualmachine.DataSource(),
 		},
 
 		ConfigureContextFunc: configureProvider,

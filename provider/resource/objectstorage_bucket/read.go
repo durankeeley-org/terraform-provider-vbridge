@@ -1,4 +1,4 @@
-package objectstoragebucket
+package resource_objectstoragebucket
 
 import (
 	"terraform-provider-vbridge/api"
