@@ -1,4 +1,4 @@
-package objectstoragebucket
+package resource_objectstoragebucket
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"

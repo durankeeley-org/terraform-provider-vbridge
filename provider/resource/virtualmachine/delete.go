@@ -1,4 +1,4 @@
-package virtualmachine
+package resource_virtualmachine
 
 import (
 	"fmt"

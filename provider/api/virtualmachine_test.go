@@ -74,7 +74,7 @@ func TestCreateVM(t *testing.T) {
 		},
 	}
 
-	client := testClient(mockServer.URL)
+	client := MockClient(mockServer.URL)
 
 	// When
 	result, err := client.CreateVM(vm)
@@ -110,7 +110,7 @@ func TestGetVMByName(t *testing.T) {
 	}))
 	defer mockServer.Close()
 
-	client := testClient(mockServer.URL)
+	client := MockClient(mockServer.URL)
 
 	// When
 	result, err := client.GetVMByName("test-vm-1", 123)
@@ -160,7 +160,7 @@ func TestGetVMDetailedByID(t *testing.T) {
 	}))
 	defer mockServer.Close()
 
-	client := testClient(mockServer.URL)
+	client := MockClient(mockServer.URL)
 
 	// When
 	result, err := client.GetVMDetailedByID("12345")
@@ -213,7 +213,7 @@ func TestPowerOffVM(t *testing.T) {
 	}))
 	defer mockServer.Close()
 
-	client := testClient(mockServer.URL)
+	client := MockClient(mockServer.URL)
 
 	// When
 	err := client.PowerOffVM("7452")
@@ -251,7 +251,7 @@ func TestDeleteVM(t *testing.T) {
 	}))
 	defer mockServer.Close()
 
-	client := testClient(mockServer.URL)
+	client := MockClient(mockServer.URL)
 
 	// When
 	err := client.DeleteVM("7452", "vm-000")

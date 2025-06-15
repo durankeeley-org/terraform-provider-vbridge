@@ -25,7 +25,6 @@ api_user_email = "example@example.com"
 terraform {
   required_providers {
     vbridge = {
-      version = "~> 1.0.2"
       source  = "durankeeley-org/vbridge"
     }
   }
@@ -106,5 +105,11 @@ resource "vbridge_virtual_machine" "example" {
       guest_os_id
     ]
   }
+}
+
+# Import a machine
+data "vbridge_virtual_machine" "example" {
+  name      = "dev-chc-example"
+  client_id = var.client_id
 }
 ```

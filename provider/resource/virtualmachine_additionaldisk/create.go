@@ -1,4 +1,4 @@
-package additionaldisk
+package resource_virtualmachine_additionaldisk
 
 import (
 	"terraform-provider-vbridge/api"

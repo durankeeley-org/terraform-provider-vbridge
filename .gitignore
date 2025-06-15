@@ -5,4 +5,7 @@ example/terraform.tfstate
 example/terraform.tfstate.backup
 provider/goreleaser.yml
 provider/terraform-registry-manifest.json
-example-dev/*
+#go-batect
+#batect.yml
+binaries/*
+dev-example/*
