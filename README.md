@@ -2,7 +2,15 @@
 
 This is a custom Terraform provider for managing infrastructure on [Softsource vBridge](https://www.svbgroup.co.nz/), a New Zealand-based IaaS public cloud provider headquartered in Christchurch.
 
-The provider enables users to deploy and manage virtual machines and related infrastructure through the vBridge API.
+The provider enables users to deploy and manage virtual machines and related infrastructure through the vBridge API, this allows infrastructure resources to be managed as code in a consistent and repeatable way.
+
+This project also makes use of **[go-batect](https://github.com/durankeeley/go-batect)** — a lightweight replacement for Batect written in Go by [Duran Keeley](https://github.com/durankeeley).
+
+### About go-batect
+
+**go-batect** allows you to define your development tasks (building, running, testing, linting and more) in terms of one or more Docker containers, run those tasks quickly and consistently everywhere, and easily share them.
+
+> **Batect** is an acronym: **Build and testing environments as code tool**
 
 ---
 
@@ -19,7 +27,7 @@ The provider enables users to deploy and manage virtual machines and related inf
 
 * [Go 1.21+](https://golang.org/dl/)
 * [Terraform](https://developer.hashicorp.com/terraform/downloads)
-* [`go-batect`](https://github.com/your-org/go-batect) installed or vendored into your project
+* [`go-batect`](https://github.com/durankeeley/go-batect) (already commited linux version in this repo)
 * API Key + Email from Softsource vBridge
 
 ---

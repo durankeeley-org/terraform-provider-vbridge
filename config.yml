@@ -53,5 +53,6 @@ tasks:
   check-all:
     description: Runs all the code checks
     prerequisites:
-      - build
+      - test
       - security-scan
+      - build

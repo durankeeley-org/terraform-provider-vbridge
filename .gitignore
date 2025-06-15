@@ -8,3 +8,4 @@ provider/terraform-registry-manifest.json
 #go-batect
 #batect.yml
 binaries/*
+dev-example/*

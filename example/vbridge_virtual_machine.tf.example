@@ -1,5 +1,12 @@
+variable "auth_type" {
+  description = "Softsource vBridge Authentication type to use"
+  type        = string
+  default     = "apiKey"
+  sensitive   = true
+}
+
 variable "api_key" {
-  description = "Softsource vBridge API Key"
+  description = "Softsource vBridge API Key or Bearer Token"
   type        = string
   sensitive   = true
 }
@@ -13,13 +20,7 @@ variable "api_user_email" {
 variable "client_id" {
   description = "Softsource vBridge client id"
   type        = number
-  sensitive   = true
-}
-
-variable "api_url" {
-  description = "URL for the API"
-  type        = string
-  default = "http://127.0.0.1:8087"
+  default     = 0000
   sensitive   = true
 }
 
@@ -33,11 +34,12 @@ terraform {
 }
 
 provider "vbridge" {
-  api_url    = "${var.api_url}"
-  api_key    = "${var.api_key}"
-  user_email = "${var.api_user_email}"
+  auth_type  = var.auth_type
+  api_key    = var.api_key
+  user_email = var.api_user_email
 }
 
+# Create VM
 resource "vbridge_virtual_machine" "example" {
   provider = vbridge
   client_id                          = var.client_id
@@ -69,6 +71,21 @@ resource "vbridge_virtual_machine_additionaldisk" "disk2" {
   storage_profile = "vStorageT1"
   capacity = 47
 }
+
+# Import VM
+data "vbridge_virtual_machine" "name" {
+  client_id = var.client_id
+  name      = "dev-chc-example"
+}
+
+### Disk Types
+
+# # Performance Disk
+# resource "vbridge_virtual_machine_additionaldisk" "disk2" {
+#   vm_id = resource.vbridge_virtual_machine.example.vm_id
+#   storage_profile = "vStorageT1"
+#   capacity = 47
+# }
 
 # # General Use Disk 
 # resource "vbridge_virtual_machine_additionaldisk" "disk2" {
