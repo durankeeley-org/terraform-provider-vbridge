@@ -1,3 +1,4 @@
+# go-batect configuration file for the vBridge Terraform provider project.
 containers:
   terraform:
     image: hashicorp/terraform:latest
@@ -27,13 +28,16 @@ tasks:
     shell_executable: sh
     run:
       container: golang
-      command: cd provider && env GOOS=windows GOARCH=amd64 go build -o "../binaries/terraform-provider-vbridge.exe" -buildvcs=false && env GOOS=linux GOARCH=amd64 go build -o "../binaries/terraform-provider-vbridge" -buildvcs=false
+      command: |
+        cd provider
+        env GOOS=windows GOARCH=amd64 go build -o "../binaries/terraform-provider-vbridge.exe" -buildvcs=false
+        env GOOS=linux GOARCH=amd64 go build -o "../binaries/terraform-provider-vbridge" -buildvcs=false
 
   security-scan:
-    description: Runs 'tfsec' security scanner
+    description: Runs 'trivy' security scanner
     run:
       container: tfsec
-      command: config /code
+      command: fs ./provider
 
   test:
     description: Runs all the tests
@@ -41,11 +45,13 @@ tasks:
     shell_executable: sh
     run:
       container: golang
-      command: 
+      command: |
+        set -e
+        cd provider
+        go test ./...
 
   check-all:
     description: Runs all the code checks
     prerequisites:
       - build
       - security-scan
-
