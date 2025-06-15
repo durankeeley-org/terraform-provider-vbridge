@@ -1,50 +1,30 @@
 ---
-page_title: "vbridge_virtual_machine Resource - terraform-provider-vbridge"
+page_title: "vbridge_virtual_machine Data Source - terraform-provider-vbridge"
 subcategory: ""
 description: |-
-  This resource allows you to manage virtual machine instances in vBridge.
+  This data source allows you to look up details about an existing virtual machine instance in Softsource vBridge.
 ---
 
-# vbridge_virtual_machine (Resource)
+# vbridge_virtual_machine (Data Source)
 
-This resource allows you to manage virtual machine instances in vBridge.
+This data source allows you to retrieve metadata about an existing virtual machine instance in Softsource vBridge.
 
 ## Example Usage
 
-```terraform
+```hcl
 locals {
   subscription = "prod"
   christchurch_hosting = {
-    christchurch_shortname = "chch"
-    christchurch_location = "vcchcres"
-    christchurch_locationname = "Christchurch"
-    christchurch_network = "vcchcnet-prod"
+    christchurch_shortname       = "chch"
+    christchurch_location        = "vcchcres"
+    christchurch_locationname    = "Christchurch"
+    christchurch_network         = "vcchcnet-prod"
   }
 }
 
-# Create a machine
-resource "vbridge_virtual_machine" "example" {
-  provider    = vbridge
-  client_id   = var.client_id
-  name        = "${local.subscription}-${local.christchurch_hosting.christchurch_shortname}-example"
-  template    = "Windows2022_Standard_30GB"
-  guest_os_id = "windows2019srv_64Guest"
-  cores       = 2
-  memory_size = 6
-  operating_system_disk_capacity     = 35
-  operating_system_disk_storage_profile = "vStorageT1"
-  iso_file                              = ""
-  quote_item                            = {}
-  hosting_location_id                   = local.christchurch_hosting.christchurch_location
-  hosting_location_name                 = local.christchurch_hosting.christchurch_locationname
-  hosting_location_default_network      = local.christchurch_hosting.christchurch_network
-  backup_type                           = "vBackupDisk"
-
-  lifecycle {
-    ignore_changes = [
-      guest_os_id
-    ]
-  }
+data "vbridge_virtual_machine" "example" {
+  name      = "${local.subscription}-${local.christchurch_hosting.christchurch_shortname}-example"
+  client_id = var.client_id
 }
 ```
 
@@ -52,41 +32,26 @@ resource "vbridge_virtual_machine" "example" {
 
 The following arguments are supported:
 
-* `client_id` - (Required) The ID of the vBridge client to create the virtual machine for.
-
-* `name` - (Required) The name of the virtual machine.
-
-* `template` - (Optional) The template to use for the virtual machine.
-
-* `guest_os_id` - (Required) The guest OS ID to use for the virtual machine.
-
-* `cores` - (Required) The number of cores to allocate to the virtual machine.
-
-* `memory_size` - (Required) The amount of memory to allocate to the virtual machine.
-
-* `operating_system_disk_capacity` - (Required) The capacity of the operating system disk in GB.
-
-* `operating_system_disk_storage_profile` - (Required) The storage profile to use for the operating system disk, options are `vStorageT1`, `vStorageT2`, `vStorageT3`.
-
-* `iso_file` - (Optional) The ISO file to use for the virtual machine.
-
-* `quote_item` - (Optional) The quote item to use for the virtual machine.
-
-* `hosting_location_id` - (Required) The ID of the hosting location to create the virtual machine in.
-
-* `hosting_location_name` - (Required) The name of the hosting location to create the virtual machine in.
-
-* `hosting_location_default_network` - (Required) The default network to use for the virtual machine.
-
-* `backup_type` - (Required) The backup type to use for the virtual machine, options are `vBackupDisk`, `vBackupNone`.
-
-* `lifecycle` - (Optional) A block that can be used to ignore changes to specific arguments. See the example above for usage.
+* `name` - (Required) The name of the virtual machine to look up.
+* `client_id` - (Required) The ID of the vBridge client to which the VM belongs.
 
 ## Attributes Reference
 
 The following attributes are exported:
 
-* `vm_id` - The ID of the virtual machine.
+* `client_id` - The ID of the client the VM belongs to.
+* `name` - The name of the virtual machine.
+* `guest_os_id` - The guest OS identifier.
+* `cores` - Number of CPU cores allocated.
+* `memory_size` - Amount of memory allocated in GB.
+* `backup_type` - Backup configuration (`vBackupDisk`, `vBackupNone`).
+* `hosting_location_id` - Hosting location ID.
+* `operating_system_disk_guid` - GUID of the OS disk.
+* `operating_system_disk_capacity` - Capacity of the OS disk in GB.
+* `operating_system_disk_storage_profile` - Storage tier (e.g., `vStorageT1`).
+* `vm_id` - Unique identifier of the virtual machine.
+* `mo_ref` - The managed object reference (VMware).
 
-* `mo_ref` - The managed object reference of the virtual machine.
+## Notes
 
+This data source is useful when you need to reference existing VMs in Terraform without managing their lifecycle. For example, if the VM is created externally or via another workspace, this allows you to reference its configuration and metadata.
