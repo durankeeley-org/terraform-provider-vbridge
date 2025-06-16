@@ -6,11 +6,15 @@ import (
 
 func Resource() *schema.Resource {
 	return &schema.Resource{
+		Schema: Schema(),
+
 		Create: Create,
 		Read:   Read,
 		Update: Update,
 		Delete: Delete,
 
-		Schema: Schema(),
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
 	}
 }
