@@ -108,3 +108,8 @@ type DeleteDiskPayload struct {
 	DiskUUID          string `json:"diskUUID"`
 	Description       string `json:"description"`
 }
+
+type MetadataPayload struct {
+	VirtualResourceId string `json:"virtualresourceid"`
+	Description       string `json:"description"`
+}

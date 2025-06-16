@@ -79,6 +79,27 @@ func Create(d *schema.ResourceData, meta interface{}) error {
 			}
 		}
 	}
+
+	var tags map[string]interface{}
+	var description, notes string
+
+	if v, ok := d.GetOk("tags"); ok {
+		tags = v.(map[string]interface{})
+	} else {
+		tags = map[string]interface{}{}
+	}
+
+	if v, ok := d.GetOk("description"); ok {
+		description = v.(string)
+	}
+
+	if v, ok := d.GetOk("notes"); ok {
+		notes = v.(string)
+	}
+
+	metadata := BuildMetadataString(tags, description, notes)
+	err = apiClient.SetMetadata(vmID, metadata)
+
 	time.Sleep(5 * time.Second)
 	return Read(d, meta)
 

@@ -28,5 +28,11 @@ func Read(d *schema.ResourceData, meta interface{}) error {
 	d.Set("hosting_location_id", vm.Specification.HostingLocationId)
 	d.Set("vm_id", vm.Id.String())
 
+	// tags
+	// tags, description, notes := ParseMetadataString(apiMetadata)
+	// d.Set("tags", tags)
+	// d.Set("description", description)
+	// d.Set("notes", notes)
+
 	return nil
 }

@@ -156,3 +156,18 @@ func (c *Client) DeleteVM(vmID string, moRef string) error {
 
 	return nil
 }
+
+func (c *Client) SetMetadata(vmID, metadataString string) error {
+	endpoint := "/api/virtualresource/annotate"
+	payload := MetadataPayload{
+		VirtualResourceId: vmID,
+		Description:       metadataString,
+	}
+
+	resp, err := c.apiRequest("POST", endpoint, payload)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	return nil
+}

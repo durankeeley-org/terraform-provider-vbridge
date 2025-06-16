@@ -52,22 +52,6 @@ func Schema() map[string]*schema.Schema {
 			Type:     schema.TypeString,
 			Required: true,
 		},
-		"additional_disks": {
-			Type:     schema.TypeList,
-			Optional: true,
-			Elem: &schema.Resource{
-				Schema: map[string]*schema.Schema{
-					"capacity": {
-						Type:     schema.TypeInt,
-						Required: true,
-					},
-					"storage_profile": {
-						Type:     schema.TypeString,
-						Required: true,
-					},
-				},
-			},
-		},
 		"iso_file": {
 			Type:     schema.TypeString,
 			Optional: true,
@@ -100,6 +84,19 @@ func Schema() map[string]*schema.Schema {
 		"mo_ref": {
 			Type:     schema.TypeString,
 			Computed: true,
+		},
+		"tags": {
+			Type:     schema.TypeMap,
+			Optional: true,
+			Elem:     &schema.Schema{Type: schema.TypeString},
+		},
+		"description": {
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		"notes": {
+			Type:     schema.TypeString,
+			Optional: true,
 		},
 	}
 }
