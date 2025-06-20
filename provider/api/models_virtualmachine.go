@@ -17,6 +17,7 @@ type VirtualMachine struct {
 	Specification       Specification          `json:"specification"`
 	MountedISO          *string                `json:"mountedISO"`
 	BackupType          string                 `json:"backupType,omitempty"`
+	Annotation          string                 `json:"annotation,omitempty"`
 }
 
 type HostingLocation struct {

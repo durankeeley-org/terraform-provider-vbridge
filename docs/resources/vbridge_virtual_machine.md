@@ -7,7 +7,7 @@ description: |-
 
 # vbridge_virtual_machine (Resource)
 
-This resource allows you to manage virtual machine instances in vBridge.
+This resource allows you to manage virtual machine instances in [Softsource vBridge](https://www.svbgroup.co.nz/), a New Zealand-based IaaS public cloud provider headquartered in Christchurch.
 
 ## Example Usage
 
@@ -64,7 +64,7 @@ The following arguments are supported:
 
 * `memory_size` - (Required) The amount of memory to allocate to the virtual machine.
 
-* `operating_system_disk_capacity` - (Required) The capacity of the operating system disk in GB.
+* `operating_system_disk_capacity` - (Optional if template has been specified) The capacity of the operating system disk in GB.
 
 * `operating_system_disk_storage_profile` - (Required) The storage profile to use for the operating system disk, options are `vStorageT1`, `vStorageT2`, `vStorageT3`.
 
@@ -78,7 +78,13 @@ The following arguments are supported:
 
 * `hosting_location_default_network` - (Required) The default network to use for the virtual machine.
 
-* `backup_type` - (Required) The backup type to use for the virtual machine, options are `vBackupDisk`, `vBackupNone`.
+* `backup_type` - (Required) The backup type to use for the virtual machine, options are `vBackupDisk`, `vBackupNone` or `vBackup`.
+
+* `tags` - (Optional) *bearer token required* The tags to assign to the virtual machine.
+
+* `description` - (Optional) *bearer token required* A description for the virtual machine.
+
+* `notes` - (Optional) *bearer token required* Notes for the virtual machine.
 
 * `lifecycle` - (Optional) A block that can be used to ignore changes to specific arguments. See the example above for usage.
 
