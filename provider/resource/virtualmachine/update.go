@@ -18,6 +18,9 @@ func Update(d *schema.ResourceData, meta interface{}) error {
 	// }
 
 	// if d.HasChanges("cores", "memory_size") {
+	// 	if d.Get("shutdown_protection").(bool) {
+	// 		return fmt.Errorf("shutdown_protection is enabled, cannot delete VM %s", d.Get("name").(string))
+	// 	}
 	// 	err := apiClient.UpdateVMHardware(vmID, d.Get("cores").(int), d.Get("memory_size").(int))
 	// 	if err != nil {
 	// 		return err
@@ -46,6 +49,5 @@ func Update(d *schema.ResourceData, meta interface{}) error {
 	// 	}
 	// }
 
-	// return resourceVirtualMachineRead(d, meta)
 	return Read(d, meta)
 }
