@@ -101,6 +101,3 @@ terraform import vbridge_virtual_machine.example <vm_id>
 
 Replace `<vm_id>` with the actual identifier of your VM in vBridge.
 
-```
-
----
