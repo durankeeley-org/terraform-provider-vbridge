@@ -17,6 +17,12 @@ func Delete(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
+	// Stop accidental deletion of VM, timer to allow user to cancel and shutdown_protection check
+	time.Sleep(10 * time.Second)
+	if d.Get("shutdown_protection").(bool) {
+		return fmt.Errorf("shutdown_protection is enabled, cannot delete VM %s", vm.Name)
+	}
+
 	err = apiClient.PowerOffVM(vmID)
 	if err != nil {
 		return fmt.Errorf("error shutting down VM: %w", err)

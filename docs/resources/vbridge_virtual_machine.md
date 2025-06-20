@@ -2,91 +2,102 @@
 page_title: "vbridge_virtual_machine Resource - terraform-provider-vbridge"
 subcategory: ""
 description: |-
-  This resource allows you to manage virtual machine instances in vBridge.
+  Provides a vBridge virtual machine resource for managing virtual machine instances on the Softsource vBridge platform.
 ---
 
 # vbridge_virtual_machine (Resource)
 
-This resource allows you to manage virtual machine instances in vBridge.
+The `vbridge_virtual_machine` resource allows you to create and manage virtual machines in [Softsource vBridge](https://www.svbgroup.co.nz/), a New Zealand-based public cloud provider headquartered in Christchurch.
 
 ## Example Usage
 
-```terraform
-locals {
-  subscription = "prod"
-  christchurch_hosting = {
-    christchurch_shortname = "chch"
-    christchurch_location = "vcchcres"
-    christchurch_locationname = "Christchurch"
-    christchurch_network = "vcchcnet-prod"
-  }
-}
-
-# Create a machine
+```hcl
 resource "vbridge_virtual_machine" "example" {
-  provider    = vbridge
   client_id   = var.client_id
-  name        = "${local.subscription}-${local.christchurch_hosting.christchurch_shortname}-example"
+  name        = "prod-chch-web01"
   template    = "Windows2022_Standard_30GB"
   guest_os_id = "windows2019srv_64Guest"
   cores       = 2
   memory_size = 6
-  operating_system_disk_capacity     = 35
-  operating_system_disk_storage_profile = "vStorageT1"
-  iso_file                              = ""
-  quote_item                            = {}
-  hosting_location_id                   = local.christchurch_hosting.christchurch_location
-  hosting_location_name                 = local.christchurch_hosting.christchurch_locationname
-  hosting_location_default_network      = local.christchurch_hosting.christchurch_network
-  backup_type                           = "vBackupDisk"
 
-  lifecycle {
-    ignore_changes = [
-      guest_os_id
-    ]
-  }
+  operating_system_disk_capacity        = 35
+  operating_system_disk_storage_profile = "vStorageT1"
+
+  hosting_location_id            = "vcchcres"
+  hosting_location_name          = "Christchurch"
+  hosting_location_default_network = "vcchcnet-prod"
+
+  backup_type = "vBackupDisk"
+
+  tags        = { environment = "prod" }
+  description = "Web frontend"
+  notes       = "Created via Terraform"
 }
-```
+````
+
+## Create Logic Explained
+
+The creation of a `vbridge_virtual_machine` resource follows these rules:
+
+* **Template vs Disk Capacity**:
+  Either `template` or `operating_system_disk_capacity` must be provided. If no `template` is given, then `operating_system_disk_capacity` is **required** to manually define the OS disk.
+
+* **Disk Extension**:
+  If a template is used, the system provisions a default disk size.
+  If you also specify a larger `operating_system_disk_capacity`, Terraform will automatically extend the disk after creation to match your specified size.
+
+* **ISO Support**:
+  You can optionally attach an ISO file via `iso_file`.
+
+* **Metadata Application**:
+  If `tags`, `description`, or `notes` are provided, these are encoded and submitted as annotate for the VM after creation.
 
 ## Argument Reference
 
-The following arguments are supported:
+### Required
 
-* `client_id` - (Required) The ID of the vBridge client to create the virtual machine for.
+* `client_id` (Number) – ID of the vBridge client owning the VM.
+* `name` (String) – The name of the virtual machine.
+* `guest_os_id` (String) – vSphere guest OS identifier.
+* `cores` (Number) – The number of cores to allocate to the virtual machine.
+* `memory_size` (Number) – The amount of memory to allocate to the virtual machine in GB.
+* `operating_system_disk_storage_profile` (String) – Disk storage profile (`vStorageT1`, `vStorageT2`, `vStorageT3`).
+* `hosting_location_id` (String) – Unique ID for the hosting location.
+* `hosting_location_name` (String) – Friendly name for the hosting site.
+* `hosting_location_default_network` (String) – Default VM network.
+* `backup_type` (String) – Backup strategy (`vBackup`, `vBackupDisk`, or `vBackupNone`).
 
-* `name` - (Required) The name of the virtual machine.
+### Optional
 
-* `template` - (Optional) The template to use for the virtual machine.
+* `template` (String) – Name of a VM template (e.g. `Windows2022_Standard_30GB`).
+* `operating_system_disk_capacity` (Number) – OS disk size in GB. Required when no template is provided. Will be used to extend the disk if larger than the template default.
+* `iso_file` (String) – Optional ISO file path for provisioning.
+* `quote_item` (Map) – Optional cost attribution data.
+* `shutdown_protection` (Boolean) – Prevent accidental deletion (`false` by default).
+* `tags` (Map of String) – (*Bearer token required*) Tags to attach to the VM.
+* `description` (String) – (*Bearer token required*) A freeform description.
+* `notes` (String) – (*Bearer token required*) Additional information.
 
-* `guest_os_id` - (Required) The guest OS ID to use for the virtual machine.
+### Lifecycle Configuration
 
-* `cores` - (Required) The number of cores to allocate to the virtual machine.
+* Use `lifecycle` to ignore known server-side changes such as guest OS ID:
 
-* `memory_size` - (Required) The amount of memory to allocate to the virtual machine.
-
-* `operating_system_disk_capacity` - (Required) The capacity of the operating system disk in GB.
-
-* `operating_system_disk_storage_profile` - (Required) The storage profile to use for the operating system disk, options are `vStorageT1`, `vStorageT2`, `vStorageT3`.
-
-* `iso_file` - (Optional) The ISO file to use for the virtual machine.
-
-* `quote_item` - (Optional) The quote item to use for the virtual machine.
-
-* `hosting_location_id` - (Required) The ID of the hosting location to create the virtual machine in.
-
-* `hosting_location_name` - (Required) The name of the hosting location to create the virtual machine in.
-
-* `hosting_location_default_network` - (Required) The default network to use for the virtual machine.
-
-* `backup_type` - (Required) The backup type to use for the virtual machine, options are `vBackupDisk`, `vBackupNone`.
-
-* `lifecycle` - (Optional) A block that can be used to ignore changes to specific arguments. See the example above for usage.
+```hcl
+lifecycle {
+  ignore_changes = [guest_os_id]
+}
+```
 
 ## Attributes Reference
 
-The following attributes are exported:
+* `vm_id` – Unique ID assigned to the VM by vBridge.
+* `mo_ref` – Internal vSphere managed object reference.
 
-* `vm_id` - The ID of the virtual machine.
+## Import
 
-* `mo_ref` - The managed object reference of the virtual machine.
+```shell
+terraform import vbridge_virtual_machine.example <vm_id>
+```
+
+Replace `<vm_id>` with the actual identifier of your VM in vBridge.
 

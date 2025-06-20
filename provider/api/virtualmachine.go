@@ -127,6 +127,14 @@ func (c *Client) PowerOffVM(vmID string) error {
 		Operation:         "off",
 	}
 
+	vm, err := c.GetVMDetailedByID(vmID)
+	if err != nil {
+		return fmt.Errorf("failed to get VM details for %s: %w", vmID, err)
+	}
+	if vm.Specification.PowerState == "off" {
+		return nil
+	}
+
 	resp, err := c.apiRequest("POST", endpoint, payload)
 	if err != nil {
 		return err
@@ -141,6 +149,91 @@ func (c *Client) DeleteVM(vmID string, moRef string) error {
 	payload := DeleteVMOperationPayload{
 		VirtualResourceId: vmID,
 		CheckToken:        moRef,
+	}
+
+	resp, err := c.apiRequest("POST", endpoint, payload)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		return fmt.Errorf("error response from API: %s - %s", resp.Status, string(bodyBytes))
+	}
+
+	return nil
+}
+
+func (c *Client) SetMetadata(vmID, metadataString string) error {
+	endpoint := "/api/virtualresource/annotate"
+	payload := MetadataPayload{
+		VirtualResourceId: vmID,
+		Description:       metadataString,
+	}
+
+	resp, err := c.apiRequest("POST", endpoint, payload)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	return nil
+}
+
+func (c *Client) UpdateVMSpecifications(vmID string, MemorySize int, CoreSize int) error {
+	endpoint := "/api/virtualresource/changecomputespecification"
+
+	vm, err := c.GetVMDetailedByID(vmID)
+	if err != nil {
+		return err
+	}
+
+	if vm.Specification.PowerState != "off" {
+		err = c.PowerOffVM(vmID)
+		if err != nil {
+			return fmt.Errorf("failed to power off VM %s before updating specifications: %w", vm.Name, err)
+		}
+	}
+
+	payload := UpdateVMPayload{
+		VirtualResourceId: vmID,
+		NewMemorySize:     MemorySize,
+		CurrentMemorySize: vm.Specification.MemoryGb,
+		NewCoreSize:       CoreSize,
+		CurrentCoreSize:   vm.Specification.Cores,
+		NewSocketSize:     vm.Specification.Sockets,
+		CurrentSocketSize: vm.Specification.Sockets,
+	}
+
+	resp, err := c.apiRequest("POST", endpoint, payload)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	return nil
+}
+
+func (c *Client) RenameVM(vmID, name string) error {
+	endpoint := "/api/virtualresource/renameoperation"
+	payload := RenameVMPayload{
+		VirtualResourceId: vmID,
+		NewName:           name,
+	}
+
+	resp, err := c.apiRequest("POST", endpoint, payload)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	return nil
+}
+
+func (c *Client) UpdateVMBackupType(vmID, backupType string) error {
+	endpoint := "/api/virtualresource/changebackuptype"
+	payload := UpdateBackupTypePayload{
+		VirtualResourceId:     vmID,
+		Type:                  backupType,
+		ApplicationProcessing: true,
 	}
 
 	resp, err := c.apiRequest("POST", endpoint, payload)

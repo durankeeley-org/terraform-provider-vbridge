@@ -17,6 +17,7 @@ type VirtualMachine struct {
 	Specification       Specification          `json:"specification"`
 	MountedISO          *string                `json:"mountedISO"`
 	BackupType          string                 `json:"backupType,omitempty"`
+	Annotation          string                 `json:"annotation,omitempty"`
 }
 
 type HostingLocation struct {
@@ -107,4 +108,30 @@ type DeleteDiskPayload struct {
 	VirtualResourceId string `json:"VirtualResourceId"`
 	DiskUUID          string `json:"diskUUID"`
 	Description       string `json:"description"`
+}
+
+type MetadataPayload struct {
+	VirtualResourceId string `json:"virtualresourceid"`
+	Description       string `json:"description"`
+}
+
+type UpdateVMPayload struct {
+	VirtualResourceId string `json:"virtualresourceid"`
+	NewMemorySize     int    `json:"newMemorySize"`
+	CurrentMemorySize int    `json:"currentMemorySize"`
+	NewCoreSize       int    `json:"newCoreSize"`
+	CurrentCoreSize   int    `json:"currentCoreSize"`
+	NewSocketSize     int    `json:"newSocketSize"`
+	CurrentSocketSize int    `json:"currentSocketSize"`
+}
+
+type RenameVMPayload struct {
+	VirtualResourceId string `json:"virtualresourceid"`
+	NewName           string `json:"newName"`
+}
+
+type UpdateBackupTypePayload struct {
+	VirtualResourceId     string `json:"virtualresourceid"`
+	Type                  string `json:"type"`
+	ApplicationProcessing bool   `json:"applicationProcessing"`
 }
