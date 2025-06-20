@@ -66,7 +66,7 @@ The following arguments are supported:
 
 * `operating_system_disk_capacity` - (Optional if template has been specified) The capacity of the operating system disk in GB.
 
-* `operating_system_disk_storage_profile` - (Required) The storage profile to use for the operating system disk, options are `vStorageT1`, `vStorageT2`, `vStorageT3`.
+* `operating_system_disk_storage_profile` - (Required) The storage profile to use for the operating system disk, options are `vStorageT1`, `vStorageT2` or `vStorageT3`.
 
 * `iso_file` - (Optional) The ISO file to use for the virtual machine.
 
