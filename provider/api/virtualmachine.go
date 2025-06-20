@@ -127,6 +127,14 @@ func (c *Client) PowerOffVM(vmID string) error {
 		Operation:         "off",
 	}
 
+	vm, err := c.GetVMDetailedByID(vmID)
+	if err != nil {
+		return fmt.Errorf("failed to get VM details for %s: %w", vmID, err)
+	}
+	if vm.Specification.PowerState == "off" {
+		return nil
+	}
+
 	resp, err := c.apiRequest("POST", endpoint, payload)
 	if err != nil {
 		return err
@@ -178,6 +186,13 @@ func (c *Client) UpdateVMSpecifications(vmID string, MemorySize int, CoreSize in
 	vm, err := c.GetVMDetailedByID(vmID)
 	if err != nil {
 		return err
+	}
+
+	if vm.Specification.PowerState != "off" {
+		err = c.PowerOffVM(vmID)
+		if err != nil {
+			return fmt.Errorf("failed to power off VM %s before updating specifications: %w", vm.Name, err)
+		}
 	}
 
 	payload := UpdateVMPayload{
