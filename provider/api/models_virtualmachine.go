@@ -126,8 +126,8 @@ type UpdateVMPayload struct {
 }
 
 type RenameVMPayload struct {
-	VirtualResourceId string `json:"virtualresourceid"`
-	NewName           string `json:"newName"`
+	VirtualMachineId string `json:"virtualmachineid"`
+	NewName          string `json:"newname"`
 }
 
 type UpdateBackupTypePayload struct {

@@ -1,0 +1,137 @@
+{
+    "clientId": 10001,
+    "licenses": [
+        {
+            "licenseId": 101,
+            "name": "Windows Server 2016",
+            "licenseKey": "XXXXX-XXXXX-XXXXX-XXXXX-XXXXX"
+        },
+        {
+            "licenseId": 102,
+            "name": "Windows Server 2019",
+            "licenseKey": "XXXXX-XXXXX-XXXXX-XXXXX-XXXXX"
+        },
+        {
+            "licenseId": 103,
+            "name": "Windows Server 2022",
+            "licenseKey": "XXXXX-XXXXX-XXXXX-XXXXX-XXXXX"
+        },
+        {
+            "licenseId": 104,
+            "name": "Windows Server 2025",
+            "licenseKey": "XXXXX-XXXXX-XXXXX-XXXXX-XXXXX"
+        }
+    ],
+    "promoUntil": null,
+    "specification": {
+        "availableNetworks": [
+            {
+                "id": "DistributedVirtualPortgroup-dvportgroup-1001",
+                "name": "CORP-PROD",
+                "vlan": 10,
+                "hostingLocation": "loc1res"
+            },
+            {
+                "id": "DistributedVirtualPortgroup-dvportgroup-1002",
+                "name": "CORP-TEST",
+                "vlan": 11,
+                "hostingLocation": "loc1res"
+            },
+            {
+                "id": "DistributedVirtualPortgroup-dvportgroup-1003",
+                "name": "CORP-DEV",
+                "vlan": 12,
+                "hostingLocation": "loc1res"
+            },
+            {
+                "id": "DistributedVirtualPortgroup-dvportgroup-2001",
+                "name": "CORP-L2DMZ",
+                "vlan": 20,
+                "hostingLocation": "loc2res"
+            },
+            {
+                "id": "DistributedVirtualPortgroup-dvportgroup-2002",
+                "name": "CORP-L2TRUSTED",
+                "vlan": 21,
+                "hostingLocation": "loc2res"
+            }
+        ],
+        "backupAA": false,
+        "backupLastDate": "2025-06-20T00:00:00+00:00",
+        "backupLastJob": "Weekly",
+        "backupType": "vBackup",
+        "cores": 4,
+        "healthState": "green",
+        "hostingLocationId": "loc2res",
+        "hostingLocationName": "",
+        "instantRecoveryDisks": [],
+        "memoryGb": 8,
+        "moRef": "vm-999999",
+        "mountedISO": null,
+        "networkDevices": [
+            {
+                "name": "Network adapter 1",
+                "moRef": "4000",
+                "networkName": "CORP-L2TRUSTED",
+                "macAddress": "00:00:00:00:00:00",
+                "connected": true,
+                "startConnected": true,
+                "networkId": "DistributedVirtualPortgroup-dvportgroup-2002"
+            }
+        ],
+        "powerState": "On",
+        "sockets": 1,
+        "virtualDisks": [
+            {
+                "moRef": "6000C29x-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+                "capacity": 60.0,
+                "vmfs": "[SAN-Tier1-01] generic-vm-01/generic-vm-01.vmdk",
+                "slotInfo": "Slot 0:0",
+                "tier": "Performance",
+                "name": "Hard disk 1",
+                "capacityDesciption": "62,914,560 KB",
+                "vDiskID": null,
+                "filename": null,
+                "friendlyName": null
+            },
+            {
+                "moRef": "6000C29x-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+                "capacity": 50.0,
+                "vmfs": "[SAN-Tier1-01] generic-vm-01/generic-vm-01_1.vmdk",
+                "slotInfo": "Slot 0:1",
+                "tier": "Performance",
+                "name": "Hard disk 2",
+                "capacityDesciption": "52,428,800 KB",
+                "vDiskID": null,
+                "filename": null,
+                "friendlyName": null
+            }
+        ],
+        "vmWareToolsConfigInfo": {
+            "isUpgradeBeforePowerOn": false
+        }
+    },
+    "acType": "full",
+    "annotation": "{Tags: application-service: GenericApp, business-service: GenericService, environment: dev, terraform: true} {description: Generic VM Description}",
+    "blType": "billview",
+    "firstSeen": "2024-01-01T00:00:00.00+00:00",
+    "guestHostname": "generic-vm-01.internal.example.com",
+    "guestNetworkAddress": "10.0.0.100",
+    "guestOS": "Microsoft Windows Server 2022 (64-bit)",
+    "hasSnapshot": false,
+    "healthFetched": "2025-06-20T00:00:00.00+00:00",
+    "healthState": "green",
+    "hostingLocation": "Anytown",
+    "hostingLocationType": "",
+    "id": 99999,
+    "lastBackup": "2025-06-20T00:00:00+00:00",
+    "lastCPU": 4,
+    "lastMemory": 8,
+    "lastVirtualDisks": 2,
+    "margin": 0.0,
+    "name": "CORP-DEV-GENERIC-VM01",
+    "powerState": "poweredOn",
+    "sellCostDaily": 10.00,
+    "sellCostHourly": 0.4166,
+    "sellCostMonthly": 300.00
+}
