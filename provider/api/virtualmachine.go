@@ -216,8 +216,8 @@ func (c *Client) UpdateVMSpecifications(vmID string, MemorySize int, CoreSize in
 func (c *Client) RenameVM(vmID, name string) error {
 	endpoint := "/api/virtualresource/renameoperation"
 	payload := RenameVMPayload{
-		VirtualResourceId: vmID,
-		NewName:           name,
+		VirtualMachineId: vmID,
+		NewName:          name,
 	}
 
 	resp, err := c.apiRequest("POST", endpoint, payload)
