@@ -191,9 +191,20 @@ func TestPowerOffVM(t *testing.T) {
 		Operation:         "off",
 	}
 
+	var powerOperationCalled bool
+
 	mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Handle GET /api/VirtualResource/Detailed/{id}
+		if r.Method == "GET" && r.URL.Path == "/api/VirtualResource/Detailed/7452" {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte(`{"specification": {"powerState": "on"}}`))
+			return
+		}
+
 		// Handle POST /api/virtualresource/poweroperation
 		if r.Method == "POST" && r.URL.Path == "/api/virtualresource/poweroperation" {
+			powerOperationCalled = true
 			w.Header().Set("Content-Type", "application/json")
 
 			var receivedPayload PowerOperationPayload
@@ -220,6 +231,7 @@ func TestPowerOffVM(t *testing.T) {
 
 	// Then
 	assert.NoError(t, err, "expected no error from PowerOffVM")
+	assert.True(t, powerOperationCalled, "expected power operation to be called")
 }
 
 func TestDeleteVM(t *testing.T) {
